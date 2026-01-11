@@ -5,16 +5,19 @@ const steps = [
     icon: FileText,
     title: "Submit your request",
     description: "Tell us what you need and where you're located. It takes less than a minute.",
+    iconColor: "bg-blue-50 text-blue-600",
   },
   {
     icon: Users,
     title: "Get matched",
     description: "We connect you with qualified local professionals in your area.",
+    iconColor: "bg-teal-50 text-teal-600",
   },
   {
     icon: CheckCircle2,
     title: "Choose your pro",
     description: "Review profiles, compare quotes, and hire the professional that fits best.",
+    iconColor: "bg-green-50 text-green-600",
   },
 ]
 
@@ -32,7 +35,7 @@ export function HowItWorks() {
         <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
           {steps.map((step, index) => (
             <div key={step.title} className="text-center">
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-slate-100 text-slate-700 mb-6">
+              <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full ${step.iconColor} mb-6`}>
                 <step.icon className="h-7 w-7" />
               </div>
               <h3 className="text-xl font-semibold text-slate-900 mb-3">{step.title}</h3>

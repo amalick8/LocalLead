@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/footer';
 import { useAuth } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
@@ -150,6 +151,7 @@ export default function BusinessLogin() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

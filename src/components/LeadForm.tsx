@@ -121,7 +121,7 @@ export function LeadForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="service" className="text-sm font-medium text-slate-700">
+        <Label htmlFor="service" className="text-base font-medium text-slate-700">
           Service needed
         </Label>
         <Select
@@ -130,7 +130,7 @@ export function LeadForm() {
         >
           <SelectTrigger 
             id="service" 
-            className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
+            className="h-14 text-lg border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
           >
             <SelectValue placeholder="Select a service" />
           </SelectTrigger>
@@ -149,7 +149,7 @@ export function LeadForm() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="name" className="text-sm font-medium text-slate-700">
+          <Label htmlFor="name" className="text-base font-medium text-slate-700">
             Your name
           </Label>
           <Input
@@ -157,7 +157,7 @@ export function LeadForm() {
             value={formData.name}
             onChange={(e) => handleChange('name', e.target.value)}
             placeholder="John Smith"
-            className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
+            className="h-14 text-lg border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
           />
           {errors.name && (
             <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.name}</p>
@@ -165,7 +165,7 @@ export function LeadForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="city" className="text-sm font-medium text-slate-700">
+          <Label htmlFor="city" className="text-base font-medium text-slate-700">
             Location
           </Label>
           <Input
@@ -173,7 +173,7 @@ export function LeadForm() {
             value={formData.city}
             onChange={(e) => handleChange('city', e.target.value)}
             placeholder="City or ZIP code"
-            className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
+            className="h-14 text-lg border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
           />
           {errors.city && (
             <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.city}</p>
@@ -182,7 +182,7 @@ export function LeadForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description" className="text-sm font-medium text-slate-700">
+        <Label htmlFor="description" className="text-base font-medium text-slate-700">
           Project description
         </Label>
         <Textarea
@@ -190,7 +190,7 @@ export function LeadForm() {
           value={formData.description}
           onChange={(e) => handleChange('description', e.target.value)}
           placeholder="Tell us what you need help with..."
-          className="min-h-[100px] text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200 resize-none"
+          className="min-h-[120px] text-lg border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200 resize-none py-3"
         />
         {errors.description && (
           <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.description}</p>
@@ -198,7 +198,7 @@ export function LeadForm() {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-sm font-medium text-slate-700">Preferred contact method</Label>
+        <Label className="text-base font-medium text-slate-700">Preferred contact method</Label>
         <div className="flex gap-4 mt-2">
           <label className="flex items-center gap-2 cursor-pointer group">
             <input
@@ -209,7 +209,7 @@ export function LeadForm() {
               onChange={(e) => handleChange('contact_preference', e.target.value)}
               className="h-4 w-4 text-blue-600 border-slate-300 focus:ring-2 focus:ring-blue-500/20 cursor-pointer"
             />
-            <span className="text-sm text-slate-700 group-hover:text-slate-900">Email</span>
+            <span className="text-base text-slate-700 group-hover:text-slate-900">Email</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer group">
             <input
@@ -220,14 +220,14 @@ export function LeadForm() {
               onChange={(e) => handleChange('contact_preference', e.target.value)}
               className="h-4 w-4 text-blue-600 border-slate-300 focus:ring-2 focus:ring-blue-500/20 cursor-pointer"
             />
-            <span className="text-sm text-slate-700 group-hover:text-slate-900">Phone</span>
+            <span className="text-base text-slate-700 group-hover:text-slate-900">Phone</span>
           </label>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {formData.contact_preference === 'email' ? (
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm font-medium text-slate-700">
+          <Label htmlFor="email" className="text-base font-medium text-slate-700">
             Email
           </Label>
           <Input
@@ -236,15 +236,15 @@ export function LeadForm() {
             value={formData.email}
             onChange={(e) => handleChange('email', e.target.value)}
             placeholder="your@email.com"
-            className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
+            className="h-14 text-lg border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
           />
           {errors.email && (
             <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.email}</p>
           )}
         </div>
-
+      ) : (
         <div className="space-y-2">
-          <Label htmlFor="phone" className="text-sm font-medium text-slate-700">
+          <Label htmlFor="phone" className="text-base font-medium text-slate-700">
             Phone
           </Label>
           <Input
@@ -253,18 +253,18 @@ export function LeadForm() {
             value={formData.phone}
             onChange={(e) => handleChange('phone', e.target.value)}
             placeholder="(555) 123-4567"
-            className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
+            className="h-14 text-lg border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
           />
           {errors.phone && (
             <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.phone}</p>
           )}
         </div>
-      </div>
+      )}
 
       <Button
         type="submit"
         size="lg"
-        className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm hover:shadow transition-all duration-200 mt-6"
+        className="w-full h-14 text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm hover:shadow transition-all duration-200 mt-6"
         disabled={createLead.isPending}
       >
         {createLead.isPending ? (

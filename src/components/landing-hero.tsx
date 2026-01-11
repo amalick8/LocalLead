@@ -6,12 +6,12 @@ export function LandingHero() {
       <div className="mx-auto max-w-7xl">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           {/* Left: Headline + Description */}
-          <div className="pt-4 lg:pt-8">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-slate-900 leading-tight mb-6">
+          <div className="pt-2 lg:pt-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-slate-900 leading-tight mb-5">
               Find trusted local professionals — without the stress.
             </h1>
 
-            <p className="text-lg sm:text-xl text-slate-600 leading-relaxed mb-8 max-w-xl">
+            <p className="text-lg sm:text-xl text-slate-600 leading-relaxed mb-6 max-w-xl">
               Tell us what you need. We'll connect you with vetted pros in your area, fast.
             </p>
 

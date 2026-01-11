@@ -6,7 +6,17 @@ export function Footer() {
 
   const scrollToSection = (id: string) => {
     if (window.location.pathname === '/') {
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      const element = document.getElementById(id);
+      if (element) {
+        const headerHeight = 80; // h-20 = 80px
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - headerHeight;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
     } else {
       navigate(`/#${id}`);
     }
@@ -67,7 +77,13 @@ export function Footer() {
             <ul className="space-y-3">
               <li>
                 <button
-                  onClick={() => scrollToSection('how-it-works')}
+                  onClick={() => {
+                    if (window.location.pathname === '/') {
+                      scrollToSection('how-it-works');
+                    } else {
+                      navigate('/#how-it-works');
+                    }
+                  }}
                   className="text-gray-400 hover:text-white transition-colors text-left"
                 >
                   How It Works
@@ -75,14 +91,28 @@ export function Footer() {
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection('services-section')}
+                  onClick={() => {
+                    if (window.location.pathname === '/') {
+                      scrollToSection('services-section');
+                    } else {
+                      navigate('/#services-section');
+                    }
+                  }}
                   className="text-gray-400 hover:text-white transition-colors text-left"
                 >
                   Browse Services
                 </button>
               </li>
               <li>
-                <Link to="/" className="text-gray-400 hover:text-white transition-colors">
+                <Link 
+                  to="/" 
+                  onClick={() => {
+                    setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }, 100);
+                  }}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Request a Quote
                 </Link>
               </li>

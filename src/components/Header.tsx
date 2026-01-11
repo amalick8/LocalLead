@@ -14,9 +14,20 @@ export function Header() {
 
   const scrollToSection = (id: string) => {
     if (window.location.pathname === '/') {
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      const element = document.getElementById(id);
+      if (element) {
+        const headerHeight = 80; // h-20 = 80px
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - headerHeight;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
     } else {
       navigate(`/#${id}`);
+      // Scroll will be handled by useEffect in App or Index component
     }
   };
 
@@ -58,25 +69,25 @@ export function Header() {
             <nav className="hidden md:flex items-center gap-8">
               <button
                 onClick={() => scrollToSection('how-it-works')}
-                className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="text-base font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
                 How It Works
               </button>
               <button
                 onClick={() => scrollToSection('services-section')}
-                className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="text-base font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
                 Services
               </button>
               <Link
                 to="/pricing"
-                className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="text-base font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
                 Pricing
               </Link>
               <Link
                 to="/business/get-more-leads"
-                className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="text-base font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
                 For Businesses
               </Link>
