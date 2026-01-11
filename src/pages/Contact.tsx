@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
+import { Footer } from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -34,99 +34,104 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-slate-50">
       <Header />
 
-      <main className="pt-24 pb-20">
-        <div className="container-narrow">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl font-bold text-slate-800 mb-6">Contact Us</h1>
-            <p className="text-xl text-slate-600 mb-12 leading-relaxed">
+      <main className="pt-32 pb-20 px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-12">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-slate-900 mb-4">Contact us</h1>
+            <p className="text-lg text-slate-600 max-w-2xl">
               Have a question or need support? We're here to help.
             </p>
+          </div>
 
-            <div className="grid lg:grid-cols-2 gap-12">
-              {/* Contact Information */}
-              <div>
-                <h2 className="text-2xl font-bold text-slate-800 mb-6">Get in Touch</h2>
-                <div className="space-y-6">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <Mail className="h-5 w-5 text-blue-600" />
-                      <h3 className="font-semibold text-slate-800">Email Support</h3>
-                    </div>
-                    <a 
-                      href="mailto:support@locallead.com" 
-                      className="text-blue-600 hover:underline"
-                    >
-                      support@locallead.com
-                    </a>
+          <div className="grid lg:grid-cols-2 gap-12">
+            {/* Contact Information */}
+            <div>
+              <h2 className="text-xl font-semibold text-slate-900 mb-6">Get in touch</h2>
+              <div className="space-y-6">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <Mail className="h-5 w-5 text-blue-600" />
+                    <h3 className="font-medium text-slate-900">Email support</h3>
                   </div>
+                  <a 
+                    href="mailto:support@locallead.com" 
+                    className="text-blue-600 hover:underline"
+                  >
+                    support@locallead.com
+                  </a>
+                </div>
 
-                  <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                    <p className="text-sm text-slate-600">
-                      <strong className="text-slate-800">Expected Response Time:</strong> We typically respond to all inquiries within 24-48 hours during business days.
-                    </p>
-                  </div>
+                <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                  <p className="text-sm text-slate-600">
+                    <strong className="text-slate-900">Expected response time:</strong> We typically respond to all inquiries within 24-48 hours during business days.
+                  </p>
+                </div>
 
-                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                    <p className="text-sm text-slate-700">
-                      <strong className="text-slate-800">For urgent service needs:</strong> Please contact a local professional directly. 
-                      LocalLead is a platform for connecting with service providers, not an emergency service.
-                    </p>
-                  </div>
+                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                  <p className="text-sm text-slate-700">
+                    <strong className="text-slate-900">For urgent service needs:</strong> Please contact a local professional directly. 
+                    LocalLead is a platform for connecting with service providers, not an emergency service.
+                  </p>
                 </div>
               </div>
+            </div>
 
-              {/* Contact Form */}
-              <div>
-                <h2 className="text-2xl font-bold text-slate-800 mb-6">Send a Message</h2>
+            {/* Contact Form */}
+            <div>
+              <div className="bg-white rounded-xl border border-slate-200 p-8 lg:p-10 shadow-sm">
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold text-slate-900 mb-2">Send a message</h2>
+                  <p className="text-sm text-slate-600">Fill out the form below and we'll get back to you.</p>
+                </div>
                 <form onSubmit={handleSubmit} className="space-y-5">
-                  <div>
-                    <Label htmlFor="name">Name</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm font-medium text-slate-700">Name</Label>
                     <Input
                       id="name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Your name"
-                      className="mt-1.5 h-12"
+                      className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
                       required
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="email">Email</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email</Label>
                     <Input
                       id="email"
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="your@email.com"
-                      className="mt-1.5 h-12"
+                      className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
                       required
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="subject">Subject</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="subject" className="text-sm font-medium text-slate-700">Subject</Label>
                     <Input
                       id="subject"
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                       placeholder="What is this regarding?"
-                      className="mt-1.5 h-12"
+                      className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
                       required
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="message">Message</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="message" className="text-sm font-medium text-slate-700">Message</Label>
                     <Textarea
                       id="message"
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       placeholder="Tell us how we can help..."
-                      className="mt-1.5 min-h-[120px] resize-none"
+                      className="min-h-[100px] text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200 resize-none"
                       required
                     />
                   </div>
@@ -134,7 +139,7 @@ export default function Contact() {
                   <Button
                     type="submit"
                     size="lg"
-                    className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-teal-600 hover:from-blue-700 hover:via-blue-800 hover:to-teal-700 text-white"
+                    className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm hover:shadow transition-all duration-200 mt-6"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (

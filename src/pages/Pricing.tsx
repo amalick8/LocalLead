@@ -1,5 +1,5 @@
 import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
+import { Footer } from '@/components/footer';
 import { CheckCircle2 } from 'lucide-react';
 
 export default function Pricing() {

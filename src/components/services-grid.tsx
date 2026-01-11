@@ -49,6 +49,29 @@ const serviceIcons: Record<string, any> = {
   "Education": GraduationCap,
 }
 
+const serviceIconColors: Record<string, string> = {
+  "Plumbing": "bg-blue-50 text-blue-600",
+  "Electrical": "bg-amber-50 text-amber-600",
+  "Painting": "bg-purple-50 text-purple-600",
+  "HVAC": "bg-cyan-50 text-cyan-600",
+  "Roofing": "bg-red-50 text-red-600",
+  "Landscaping": "bg-green-50 text-green-600",
+  "Cleaning": "bg-pink-50 text-pink-600",
+  "Handyman": "bg-orange-50 text-orange-600",
+  "Car Detailing": "bg-indigo-50 text-indigo-600",
+  "Home Cleaning": "bg-pink-50 text-pink-600",
+  "Moving Services": "bg-amber-50 text-amber-600",
+  "Tutoring": "bg-violet-50 text-violet-600",
+  "Hair Styling": "bg-rose-50 text-rose-600",
+  "Catering": "bg-emerald-50 text-emerald-600",
+  "Personal Training": "bg-sky-50 text-sky-600",
+  "Music Lessons": "bg-fuchsia-50 text-fuchsia-600",
+  "Childcare": "bg-amber-50 text-amber-600",
+  "Pet Care": "bg-lime-50 text-lime-600",
+  "Elder Care": "bg-red-50 text-red-600",
+  "Business Services": "bg-slate-50 text-slate-600",
+  "Education": "bg-blue-50 text-blue-600",
+}
 
 export function ServicesGrid() {
   const [expandedService, setExpandedService] = useState<string | null>(null)
@@ -58,19 +81,16 @@ export function ServicesGrid() {
     setExpandedService(expandedService === label ? null : label)
   }
 
-  const scrollToQuote = () => {
-    document.getElementById("quote-section")?.scrollIntoView({ behavior: "smooth" })
+  const scrollToForm = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   if (isLoading) {
     return (
-      <section id="services-section" className="px-6 py-20 lg:px-8 bg-gradient-to-b from-white to-blue-50">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center mb-14">
-            <h2 className="text-4xl font-bold text-gray-900 sm:text-5xl mb-4">Services We Cover</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Loading services...
-            </p>
+      <section id="services-section" className="px-6 py-24 lg:px-8 bg-slate-50">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center">
+            <p className="text-slate-600">Loading services...</p>
           </div>
         </div>
       </section>
@@ -78,96 +98,49 @@ export function ServicesGrid() {
   }
 
   return (
-    <section id="services-section" className="px-6 py-20 lg:px-8 bg-gradient-to-b from-white to-blue-50">
-      <div className="mx-auto max-w-7xl">
-        <div className="text-center mb-14">
-          <h2 className="text-4xl font-bold text-gray-900 sm:text-5xl mb-4">Services We Cover</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Whatever you need, we connect you with the right professionals
+    <section id="services-section" className="px-6 py-16 lg:px-8 bg-slate-50">
+      <div className="mx-auto max-w-6xl">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl sm:text-4xl font-semibold text-slate-900 mb-3">Services we cover</h2>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            From home repairs to personal services, we connect you with qualified professionals.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
           {services?.map((service) => {
             const Icon = serviceIcons[service.name] || Hammer
-            const serviceDescriptions: Record<string, string> = {
-              "Plumbing": "Licensed plumbers for repairs, installations, and maintenance",
-              "Electrical": "Certified electricians for repairs, installs, and upgrades",
-              "Painting": "Professional interior and exterior painting services",
-              "HVAC": "Heating and cooling repair, maintenance, and installation",
-              "Roofing": "Professional roofing services from repairs to replacements",
-              "Landscaping": "Lawn care, design, and outdoor maintenance services",
-              "Cleaning": "Residential and commercial cleaning services",
-              "Handyman": "General repairs and home improvement projects",
-              "Car Detailing": "Professional car washing, waxing, and interior cleaning",
-              "Home Cleaning": "Thorough home cleaning and housekeeping services",
-              "Moving Services": "Professional moving and relocation assistance",
-              "Tutoring": "Personalized tutoring and educational support",
-              "Hair Styling": "Professional haircuts, styling, and salon services",
-              "Catering": "Event catering and food service professionals",
-              "Personal Training": "Fitness coaching and personal training",
-              "Music Lessons": "Music instruction and lessons",
-              "Childcare": "Professional childcare and babysitting services",
-              "Pet Care": "Pet sitting, walking, and grooming services",
-              "Elder Care": "Compassionate elder care and assistance",
-              "Business Services": "Professional business and consulting services",
-              "Education": "Educational services and tutoring",
-            }
-            
-            const serviceIconColors: Record<string, string> = {
-              "Plumbing": "bg-blue-100 text-blue-600",
-              "Electrical": "bg-yellow-100 text-yellow-600",
-              "Painting": "bg-purple-100 text-purple-600",
-              "HVAC": "bg-cyan-100 text-cyan-600",
-              "Roofing": "bg-red-100 text-red-600",
-              "Landscaping": "bg-green-100 text-green-600",
-              "Cleaning": "bg-pink-100 text-pink-600",
-              "Handyman": "bg-orange-100 text-orange-600",
-              "Car Detailing": "bg-indigo-100 text-indigo-600",
-              "Home Cleaning": "bg-pink-100 text-pink-600",
-              "Moving Services": "bg-amber-100 text-amber-600",
-              "Tutoring": "bg-violet-100 text-violet-600",
-              "Hair Styling": "bg-rose-100 text-rose-600",
-              "Catering": "bg-emerald-100 text-emerald-600",
-              "Personal Training": "bg-sky-100 text-sky-600",
-              "Music Lessons": "bg-fuchsia-100 text-fuchsia-600",
-              "Childcare": "bg-amber-100 text-amber-600",
-              "Pet Care": "bg-lime-100 text-lime-600",
-              "Elder Care": "bg-red-100 text-red-600",
-              "Business Services": "bg-slate-100 text-slate-600",
-              "Education": "bg-blue-100 text-blue-600",
-            }
-            const iconColor = serviceIconColors[service.name] || "bg-slate-100 text-slate-600"
+            const iconColor = serviceIconColors[service.name] || "bg-slate-50 text-slate-600"
             
             return (
-              <div
+              <button
                 key={service.id}
                 onClick={() => handleServiceClick(service.name)}
-                className="group bg-white rounded-2xl p-8 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer border border-slate-200 hover:border-blue-600"
+                className="group bg-white rounded-xl p-6 text-left border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all duration-200"
               >
-                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-xl ${iconColor} mb-4 transition-transform group-hover:scale-110`}>
-                  <Icon className="h-8 w-8" />
+                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-lg ${iconColor} mb-4 transition-transform group-hover:scale-105`}>
+                  <Icon className="h-6 w-6" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{service.name}</h3>
-
+                <h3 className="text-base font-semibold text-slate-900 mb-1">{service.name}</h3>
+                
                 {expandedService === service.name && (
-                  <div className="mt-3 pt-3 border-t border-slate-200 animate-in fade-in duration-300">
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      {service.description || serviceDescriptions[service.name] || `Professional ${service.name.toLowerCase()} services`}
+                  <div className="mt-3 pt-3 border-t border-slate-100 animate-in fade-in duration-200">
+                    <p className="text-sm text-slate-600 leading-relaxed mb-3">
+                      {service.description || `Professional ${service.name.toLowerCase()} services`}
                     </p>
                     <Button
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation()
-                        scrollToQuote()
+                        scrollToForm()
                       }}
-                      className="w-full mt-4 bg-gradient-to-r from-blue-600 via-blue-700 to-teal-600 hover:from-blue-700 hover:via-blue-800 hover:to-teal-700 text-white"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg"
                     >
                       Request a quote
                     </Button>
                   </div>
                 )}
-              </div>
+              </button>
             )
           })}
         </div>

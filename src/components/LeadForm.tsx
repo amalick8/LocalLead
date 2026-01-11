@@ -15,7 +15,7 @@ import {
 import { useServices } from '@/hooks/useServices';
 import { useCreateLead } from '@/hooks/useLeads';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Send } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 const leadSchema = z.object({
   service_id: z.string().min(1, 'Please select a service'),
@@ -113,22 +113,25 @@ export function LeadForm() {
   if (servicesLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="service" className="text-base font-semibold text-gray-900">
-          What service do you need?
+        <Label htmlFor="service" className="text-sm font-medium text-slate-700">
+          Service needed
         </Label>
         <Select
           value={formData.service_id}
           onValueChange={(value) => handleChange('service_id', value)}
         >
-          <SelectTrigger id="service" className="h-14 text-base border-2 border-gray-200 focus:border-primary">
+          <SelectTrigger 
+            id="service" 
+            className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
+          >
             <SelectValue placeholder="Select a service" />
           </SelectTrigger>
           <SelectContent>
@@ -140,126 +143,109 @@ export function LeadForm() {
           </SelectContent>
         </Select>
         {errors.service_id && (
-          <p className="text-sm text-destructive mt-1">{errors.service_id}</p>
+          <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.service_id}</p>
         )}
-        <p className="text-sm text-gray-500">Choose the type of service you're looking for</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="name" className="text-base font-semibold text-gray-900">
-            Your Name
+          <Label htmlFor="name" className="text-sm font-medium text-slate-700">
+            Your name
           </Label>
           <Input
             id="name"
             value={formData.name}
             onChange={(e) => handleChange('name', e.target.value)}
             placeholder="John Smith"
-            className="h-14 text-base border-2 border-gray-200 focus:border-primary"
+            className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
           />
           {errors.name && (
-            <p className="text-sm text-destructive mt-1">{errors.name}</p>
+            <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.name}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="city" className="text-base font-semibold text-gray-900">
-            Where are you located?
+          <Label htmlFor="city" className="text-sm font-medium text-slate-700">
+            Location
           </Label>
           <Input
             id="city"
             value={formData.city}
             onChange={(e) => handleChange('city', e.target.value)}
-            placeholder="Enter your city or ZIP code"
-            className="h-14 text-base border-2 border-gray-200 focus:border-primary"
+            placeholder="City or ZIP code"
+            className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
           />
           {errors.city && (
-            <p className="text-sm text-destructive mt-1">{errors.city}</p>
+            <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.city}</p>
           )}
-          <p className="text-sm text-gray-500">We'll find pros in your area</p>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="zip_code" className="text-base font-semibold text-gray-900">
-          ZIP Code (optional)
-        </Label>
-        <Input
-          id="zip_code"
-          value={formData.zip_code}
-          onChange={(e) => handleChange('zip_code', e.target.value)}
-          placeholder="90210"
-          className="h-14 text-base border-2 border-gray-200 focus:border-primary"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="description" className="text-base font-semibold text-gray-900">
-          Describe your project
+        <Label htmlFor="description" className="text-sm font-medium text-slate-700">
+          Project description
         </Label>
         <Textarea
           id="description"
           value={formData.description}
           onChange={(e) => handleChange('description', e.target.value)}
           placeholder="Tell us what you need help with..."
-          className="min-h-[120px] resize-none text-base border-2 border-gray-200 focus:border-primary"
+          className="min-h-[100px] text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200 resize-none"
         />
         {errors.description && (
-          <p className="text-sm text-destructive mt-1">{errors.description}</p>
+          <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.description}</p>
         )}
-        <p className="text-sm text-gray-500">The more details, the better we can match you</p>
       </div>
 
       <div className="space-y-2">
-        <Label className="text-base font-semibold text-gray-900">Preferred contact method</Label>
+        <Label className="text-sm font-medium text-slate-700">Preferred contact method</Label>
         <div className="flex gap-4 mt-2">
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-2 cursor-pointer group">
             <input
               type="radio"
               name="contact_preference"
               value="email"
               checked={formData.contact_preference === 'email'}
               onChange={(e) => handleChange('contact_preference', e.target.value)}
-              className="h-4 w-4 text-primary"
+              className="h-4 w-4 text-blue-600 border-slate-300 focus:ring-2 focus:ring-blue-500/20 cursor-pointer"
             />
-            <span>Email</span>
+            <span className="text-sm text-slate-700 group-hover:text-slate-900">Email</span>
           </label>
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-2 cursor-pointer group">
             <input
               type="radio"
               name="contact_preference"
               value="phone"
               checked={formData.contact_preference === 'phone'}
               onChange={(e) => handleChange('contact_preference', e.target.value)}
-              className="h-4 w-4 text-primary"
+              className="h-4 w-4 text-blue-600 border-slate-300 focus:ring-2 focus:ring-blue-500/20 cursor-pointer"
             />
-            <span>Phone</span>
+            <span className="text-sm text-slate-700 group-hover:text-slate-900">Phone</span>
           </label>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-base font-semibold text-gray-900">
-            Your contact info
+          <Label htmlFor="email" className="text-sm font-medium text-slate-700">
+            Email
           </Label>
           <Input
             id="email"
             type="email"
             value={formData.email}
             onChange={(e) => handleChange('email', e.target.value)}
-            placeholder="Phone number or email"
-            className="h-14 text-base border-2 border-gray-200 focus:border-primary"
+            placeholder="your@email.com"
+            className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
           />
           {errors.email && (
-            <p className="text-sm text-destructive mt-1">{errors.email}</p>
+            <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.email}</p>
           )}
-          <p className="text-sm text-gray-500">How should pros reach you?</p>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="phone" className="text-base font-semibold text-gray-900">
-            Phone (optional)
+          <Label htmlFor="phone" className="text-sm font-medium text-slate-700">
+            Phone
           </Label>
           <Input
             id="phone"
@@ -267,10 +253,10 @@ export function LeadForm() {
             value={formData.phone}
             onChange={(e) => handleChange('phone', e.target.value)}
             placeholder="(555) 123-4567"
-            className="h-14 text-base border-2 border-gray-200 focus:border-primary"
+            className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
           />
           {errors.phone && (
-            <p className="text-sm text-destructive mt-1">{errors.phone}</p>
+            <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.phone}</p>
           )}
         </div>
       </div>
@@ -278,7 +264,7 @@ export function LeadForm() {
       <Button
         type="submit"
         size="lg"
-        className="h-16 w-full text-lg font-bold bg-gradient-to-r from-blue-600 via-blue-700 to-teal-600 hover:from-blue-700 hover:via-blue-800 hover:to-teal-700 text-white shadow-xl hover:shadow-2xl transition-all"
+        className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm hover:shadow transition-all duration-200 mt-6"
         disabled={createLead.isPending}
       >
         {createLead.isPending ? (
@@ -287,15 +273,12 @@ export function LeadForm() {
             Submitting...
           </>
         ) : (
-          <>
-            <Send className="h-5 w-5 mr-2" />
-            Get Free Quotes Now
-          </>
+          'Submit Request'
         )}
       </Button>
 
-      <p className="text-center text-sm text-gray-500">
-        No commitment required • Get responses within 24 hours
+      <p className="text-center text-xs text-slate-500 mt-4">
+        By submitting, you agree to be contacted by local professionals. No spam, ever.
       </p>
     </form>
   );

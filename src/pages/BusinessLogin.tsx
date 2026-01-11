@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { useAuth } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
@@ -74,93 +73,83 @@ export default function BusinessLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-slate-50">
       <Header />
 
-      <main className="pt-32 pb-20">
-        <div className="container-narrow">
-          <div className="max-w-md mx-auto">
+      <main className="pt-32 pb-20 px-6 lg:px-8">
+        <div className="mx-auto max-w-md">
+          <div className="bg-white rounded-xl border border-slate-200 p-8 lg:p-10 shadow-sm">
             <div className="text-center mb-8">
-              <img 
-                src="/icon.svg" 
-                alt="LocalLead Logo" 
-                className="h-16 w-16 mx-auto mb-4"
-              />
-              <h1 className="text-2xl font-bold text-slate-800">Business Login</h1>
-              <p className="text-slate-600 mt-1">
+              <h1 className="text-2xl font-semibold text-slate-900 mb-2">Business login</h1>
+              <p className="text-slate-600">
                 Sign in to access your leads dashboard
               </p>
             </div>
 
-            <div className="card-elevated p-6 sm:p-8">
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@business.com"
-                    className="mt-1.5 h-12"
-                  />
-                  {errors.email && (
-                    <p className="text-sm text-destructive mt-1">{errors.email}</p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="mt-1.5 h-12"
-                  />
-                  {errors.password && (
-                    <p className="text-sm text-destructive mt-1">{errors.password}</p>
-                  )}
-                </div>
-
-                <Button
-                  type="submit"
-                  variant="cta"
-                  size="lg"
-                  className="w-full"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Signing in...
-                    </>
-                  ) : (
-                    'Sign In'
-                  )}
-                </Button>
-              </form>
-
-              <div className="mt-6 space-y-3 text-center text-sm">
-                <p className="text-slate-600">
-                  Don't have an account?{' '}
-                  <Link to="/signup" className="text-blue-600 font-medium hover:underline">
-                    Create account
-                  </Link>
-                </p>
-                <p className="text-slate-500">
-                  <Link to="/contact" className="hover:underline">
-                    Forgot password?
-                  </Link>
-                </p>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@business.com"
+                  className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
+                />
+                {errors.email && (
+                  <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.email}</p>
+                )}
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium text-slate-700">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
+                />
+                {errors.password && (
+                  <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.password}</p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm hover:shadow transition-all duration-200 mt-6"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
+              </Button>
+            </form>
+
+            <div className="mt-6 space-y-3 text-center text-sm">
+              <p className="text-slate-600">
+                Don't have an account?{' '}
+                <Link to="/signup" className="text-blue-600 font-medium hover:underline">
+                  Create account
+                </Link>
+              </p>
+              <p className="text-slate-500">
+                <Link to="/contact" className="hover:underline">
+                  Forgot password?
+                </Link>
+              </p>
             </div>
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

@@ -86,11 +86,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signUp = async (email: string, password: string, businessName?: string) => {
+    // Pass business_name in metadata so trigger can handle it
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: window.location.origin,
+        data: businessName ? { business_name: businessName } : undefined,
       },
     });
 
@@ -98,12 +100,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error };
     }
 
-    // Update profile with business name if provided
+    // Fallback: If trigger didn't set business_name, update it manually
+    // This handles edge cases where trigger might not have run
     if (data.user && businessName) {
-      await supabase
-        .from('profiles')
-        .update({ business_name: businessName })
-        .eq('id', data.user.id);
+      // Wait a bit for trigger to complete, then update if needed
+      setTimeout(async () => {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('business_name')
+          .eq('id', data.user.id)
+          .single();
+        
+        if (profile && !profile.business_name) {
+          await supabase
+            .from('profiles')
+            .update({ business_name: businessName })
+            .eq('id', data.user.id);
+        }
+      }, 500);
     }
 
     return { error: null };

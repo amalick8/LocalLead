@@ -1,7 +1,17 @@
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 export function Footer() {
+  const navigate = useNavigate();
+
+  const scrollToSection = (id: string) => {
+    if (window.location.pathname === '/') {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate(`/#${id}`);
+    }
+  };
+
   return (
     <footer className="bg-gray-900 px-6 py-16 text-white">
       <div className="mx-auto max-w-7xl">
@@ -14,7 +24,7 @@ export function Footer() {
                 alt="LocalLead Logo" 
                 className="w-12 h-12"
               />
-              <span className="text-xl font-bold">Local Leads Hub</span>
+              <span className="text-xl font-bold">LocalLead</span>
             </div>
             <p className="text-gray-400 leading-relaxed mb-6">
               Connecting homeowners with trusted local service professionals since 2024.
@@ -56,19 +66,25 @@ export function Footer() {
             <h3 className="font-bold text-lg mb-4">For Homeowners</h3>
             <ul className="space-y-3">
               <li>
-                <a href="#services-section" className="text-gray-400 hover:text-white transition-colors">
+                <button
+                  onClick={() => scrollToSection('how-it-works')}
+                  className="text-gray-400 hover:text-white transition-colors text-left"
+                >
                   How It Works
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#services-section" className="text-gray-400 hover:text-white transition-colors">
+                <button
+                  onClick={() => scrollToSection('services-section')}
+                  className="text-gray-400 hover:text-white transition-colors text-left"
+                >
                   Browse Services
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#quote-section" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/" className="text-gray-400 hover:text-white transition-colors">
                   Request a Quote
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

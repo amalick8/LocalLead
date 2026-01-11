@@ -95,115 +95,109 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-slate-50">
       <Header />
 
-      <main className="pt-32 pb-20">
-        <div className="container-wide">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start max-w-5xl mx-auto">
+      <main className="pt-32 pb-20 px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             {/* Benefits */}
-            <div className="lg:sticky lg:top-32">
-              <h1 className="text-3xl sm:text-4xl font-bold">
-                Grow Your Business with{' '}
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-700 to-teal-600">Quality Leads</span>
+            <div className="lg:sticky lg:top-28">
+              <h1 className="text-3xl sm:text-4xl font-semibold text-slate-900 mb-4">
+                Grow your business with quality leads
               </h1>
-              <p className="mt-4 text-lg text-muted-foreground">
+              <p className="text-lg text-slate-600 mb-8">
                 Join hundreds of local businesses getting customers through LocalLead.
               </p>
 
-              <ul className="mt-8 space-y-4">
+              <ul className="space-y-4">
                 {benefits.map((benefit, i) => (
                   <li key={i} className="flex items-center gap-3">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-success/10 flex items-center justify-center">
-                      <CheckCircle2 className="h-4 w-4 text-success" />
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                      <CheckCircle2 className="h-4 w-4 text-blue-600" />
                     </div>
-                    <span>{benefit}</span>
+                    <span className="text-slate-700">{benefit}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
             {/* Signup Form */}
-            <div className="card-elevated p-6 sm:p-8">
-              <div className="text-center mb-6">
-                <img 
-                  src="/icon.svg" 
-                  alt="LocalLead Logo" 
-                  className="h-14 w-14 mx-auto mb-3"
-                />
-                <h2 className="text-xl font-bold">Create Your Account</h2>
+            <div className="bg-white rounded-xl border border-slate-200 p-8 lg:p-10 shadow-sm">
+              <div className="mb-6">
+                <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 mb-2">Create your account</h2>
+                <p className="text-sm sm:text-base text-slate-600">Get started in less than a minute.</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <Label htmlFor="businessName">Business Name</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="businessName" className="text-sm font-medium text-slate-700">Business Name</Label>
                   <Input
                     id="businessName"
                     value={formData.businessName}
                     onChange={(e) => handleChange('businessName', e.target.value)}
                     placeholder="Your Business Name"
-                    className="mt-1.5 h-12"
+                    className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
                   />
                   {errors.businessName && (
-                    <p className="text-sm text-destructive mt-1">{errors.businessName}</p>
+                    <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.businessName}</p>
                   )}
                 </div>
 
-                <div>
-                  <Label htmlFor="email">Email</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email</Label>
                   <Input
                     id="email"
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleChange('email', e.target.value)}
                     placeholder="you@business.com"
-                    className="mt-1.5 h-12"
+                    className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
                   />
                   {errors.email && (
-                    <p className="text-sm text-destructive mt-1">{errors.email}</p>
+                    <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.email}</p>
                   )}
                 </div>
 
-                <div>
-                  <Label htmlFor="password">Password</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-sm font-medium text-slate-700">Password</Label>
                   <Input
                     id="password"
                     type="password"
                     value={formData.password}
                     onChange={(e) => handleChange('password', e.target.value)}
                     placeholder="••••••••"
-                    className="mt-1.5 h-12"
+                    className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
                   />
                   {errors.password && (
-                    <p className="text-sm text-destructive mt-1">{errors.password}</p>
+                    <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.password}</p>
                   )}
                 </div>
 
-                <div>
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-sm font-medium text-slate-700">Confirm Password</Label>
                   <Input
                     id="confirmPassword"
                     type="password"
                     value={formData.confirmPassword}
                     onChange={(e) => handleChange('confirmPassword', e.target.value)}
                     placeholder="••••••••"
-                    className="mt-1.5 h-12"
+                    className="h-12 text-base border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
                   />
                   {errors.confirmPassword && (
-                    <p className="text-sm text-destructive mt-1">{errors.confirmPassword}</p>
+                    <p className="text-sm text-red-600 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">{errors.confirmPassword}</p>
                   )}
                 </div>
 
                 <Button
                   type="submit"
-                  variant="cta"
                   size="lg"
-                  className="w-full"
+                  className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm hover:shadow transition-all duration-200 mt-6"
                   disabled={isLoading}
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
                       Creating account...
                     </>
                   ) : (
@@ -212,9 +206,9 @@ export default function Signup() {
                 </Button>
               </form>
 
-              <p className="text-center text-sm text-muted-foreground mt-6">
+              <p className="text-center text-sm text-slate-600 mt-6">
                 Already have an account?{' '}
-                <Link to="/login" className="text-primary font-medium hover:underline">
+                <Link to="/login" className="text-blue-600 font-medium hover:underline">
                   Sign in
                 </Link>
               </p>
