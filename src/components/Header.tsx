@@ -17,10 +17,10 @@ export function Header() {
       <div className="container-wide">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-              <Zap className="h-5 w-5 text-primary-foreground" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 via-blue-700 to-teal-600">
+              <Zap className="h-5 w-5 text-white" />
             </div>
-            <span>LocalLead</span>
+            <span className="text-slate-800">LocalLead</span>
           </Link>
 
           <nav className="flex items-center gap-4">

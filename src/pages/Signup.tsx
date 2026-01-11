@@ -105,7 +105,7 @@ export default function Signup() {
             <div className="lg:sticky lg:top-32">
               <h1 className="text-3xl sm:text-4xl font-bold">
                 Grow Your Business with{' '}
-                <span className="text-gradient">Quality Leads</span>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-700 to-teal-600">Quality Leads</span>
               </h1>
               <p className="mt-4 text-lg text-muted-foreground">
                 Join hundreds of local businesses getting customers through LocalLead.
