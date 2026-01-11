@@ -1,4 +1,4 @@
-import { Building2, Facebook, Twitter, Instagram, Linkedin } from "lucide-react"
+import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export function Footer() {
@@ -9,9 +9,11 @@ export function Footer() {
           {/* Brand column */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center">
-                <Building2 className="h-6 w-6 text-white" />
-              </div>
+              <img 
+                src="/icon.svg" 
+                alt="LocalLead Logo" 
+                className="w-12 h-12"
+              />
               <span className="text-xl font-bold">Local Leads Hub</span>
             </div>
             <p className="text-gray-400 leading-relaxed mb-6">
@@ -75,17 +77,17 @@ export function Footer() {
             <h3 className="font-bold text-lg mb-4">For Businesses</h3>
             <ul className="space-y-3">
               <li>
-                <Link to="/signup" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/business/get-more-leads" className="text-gray-400 hover:text-white transition-colors">
                   Get More Leads
                 </Link>
               </li>
               <li>
-                <Link to="/signup" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/pricing" className="text-gray-400 hover:text-white transition-colors">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link to="/login" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/business/login" className="text-gray-400 hover:text-white transition-colors">
                   Business Login
                 </Link>
               </li>
@@ -96,24 +98,24 @@ export function Footer() {
             <h3 className="font-bold text-lg mb-4">Company</h3>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/about" className="text-gray-400 hover:text-white transition-colors">
                   About Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/contact" className="text-gray-400 hover:text-white transition-colors">
                   Contact
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/privacy" className="text-gray-400 hover:text-white transition-colors">
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/terms" className="text-gray-400 hover:text-white transition-colors">
                   Terms of Service
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

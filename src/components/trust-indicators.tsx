@@ -17,13 +17,13 @@ const stats = [
     icon: Star,
     value: "4.9/5",
     label: "Average Rating",
-    color: "bg-slate-100 text-slate-600",
+    color: "bg-yellow-100 text-yellow-600",
   },
   {
     icon: ThumbsUp,
     value: "98%",
     label: "Satisfaction Rate",
-    color: "bg-slate-100 text-slate-600",
+    color: "bg-green-100 text-green-600",
   },
 ]
 

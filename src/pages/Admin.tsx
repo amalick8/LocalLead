@@ -35,7 +35,6 @@ import {
   DollarSign,
   Plus,
   Pencil,
-  Zap,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
@@ -485,7 +484,11 @@ export default function Admin() {
 
       <footer className="py-8 border-t border-border">
         <div className="container-wide flex items-center justify-center gap-2 text-sm text-muted-foreground">
-          <Zap className="h-4 w-4" />
+          <img 
+            src="/icon.svg" 
+            alt="LocalLead Logo" 
+            className="h-6 w-6"
+          />
           <span>LocalLead Admin</span>
         </div>
       </footer>

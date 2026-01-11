@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Header } from '@/components/Header';
 import { useAuth } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Zap, CheckCircle2 } from 'lucide-react';
+import { Loader2, CheckCircle2 } from 'lucide-react';
 
 const signupSchema = z.object({
   businessName: z.string().min(2, 'Business name must be at least 2 characters').max(100),
@@ -126,9 +126,11 @@ export default function Signup() {
             {/* Signup Form */}
             <div className="card-elevated p-6 sm:p-8">
               <div className="text-center mb-6">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary mb-3">
-                  <Zap className="h-6 w-6 text-primary-foreground" />
-                </div>
+                <img 
+                  src="/icon.svg" 
+                  alt="LocalLead Logo" 
+                  className="h-14 w-14 mx-auto mb-3"
+                />
                 <h2 className="text-xl font-bold">Create Your Account</h2>
               </div>
 

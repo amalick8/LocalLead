@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth';
-import { Zap, LogOut, LayoutDashboard } from 'lucide-react';
+import { LogOut, LayoutDashboard } from 'lucide-react';
 
 export function Header() {
   const { user, role, signOut } = useAuth();
@@ -17,24 +17,27 @@ export function Header() {
       <div className="container-wide">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 via-blue-700 to-teal-600">
-              <Zap className="h-5 w-5 text-white" />
-            </div>
+            <img 
+              src="/icon.svg" 
+              alt="LocalLead Logo" 
+              className="h-11 w-11"
+            />
             <span className="text-slate-800">LocalLead</span>
           </Link>
 
-          <nav className="flex items-center gap-4">
+          <nav className="flex items-center gap-3">
             {user ? (
               <>
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="default"
                   onClick={() => navigate(role === 'admin' ? '/admin' : '/dashboard')}
+                  className="h-10 px-4"
                 >
                   <LayoutDashboard className="h-4 w-4 mr-2" />
                   Dashboard
                 </Button>
-                <Button variant="outline" size="sm" onClick={handleSignOut}>
+                <Button variant="outline" size="default" onClick={handleSignOut} className="h-10 px-4">
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
                 </Button>
@@ -42,12 +45,12 @@ export function Header() {
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="default" className="h-10 px-5 text-base font-semibold">
                     Sign In
                   </Button>
                 </Link>
                 <Link to="/signup">
-                  <Button variant="cta" size="sm">
+                  <Button variant="cta" size="default" className="h-10 px-6 text-base font-semibold">
                     Get Started
                   </Button>
                 </Link>

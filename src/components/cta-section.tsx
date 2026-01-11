@@ -18,6 +18,14 @@ export function CtaSection() {
       </div>
 
       <div className="mx-auto max-w-4xl text-center relative z-10">
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <img 
+            src="/icon.svg" 
+            alt="LocalLead Logo" 
+            className="h-14 w-14"
+          />
+          <span className="text-2xl font-bold text-white">LocalLead</span>
+        </div>
         <h2 className="text-4xl font-bold text-white sm:text-5xl lg:text-6xl mb-6">Ready to Get Started?</h2>
         <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto leading-relaxed">
           Join thousands of satisfied homeowners who found their perfect pro through Local Leads Hub

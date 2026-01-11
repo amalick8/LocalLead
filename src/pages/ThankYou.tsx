@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
-import { CheckCircle2, ArrowRight, Zap } from 'lucide-react';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function ThankYou() {
   return (
@@ -56,7 +56,11 @@ export default function ThankYou() {
 
       <footer className="py-8 border-t border-border">
         <div className="container-wide flex items-center justify-center gap-2 text-sm text-muted-foreground">
-          <Zap className="h-4 w-4" />
+          <img 
+            src="/icon.svg" 
+            alt="LocalLead Logo" 
+            className="h-6 w-6"
+          />
           <span>LocalLead</span>
         </div>
       </footer>
