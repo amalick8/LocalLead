@@ -15,7 +15,15 @@
 -- ============================================================================
 
 -- User roles in the system
-CREATE TYPE public.app_role AS ENUM ('business', 'admin');
+-- User roles in the system
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type WHERE typname = 'app_role'
+  ) THEN
+    CREATE TYPE public.app_role AS ENUM ('business', 'admin');
+  END IF;
+END$$;
 
 -- Contact preference for leads
 CREATE TYPE public.contact_preference AS ENUM ('phone', 'email');
@@ -376,19 +384,22 @@ CREATE POLICY "Admins can view all payments"
 -- SEED DATA
 -- ============================================================================
 
--- Insert default services
-INSERT INTO public.services (name, description, price_cents) VALUES
-  ('Plumbing', 'Plumbing repairs and installation', 2000),
-  ('Electrical', 'Electrical services and repairs', 2000),
-  ('Home Cleaning', 'Residential cleaning services', 1000),
-  ('Moving Services', 'Local and long-distance moving', 2500),
-  ('Tutoring', 'Academic tutoring and test prep', 1500),
-  ('Car Detailing', 'Auto detailing and cleaning', 1200),
-  ('Landscaping', 'Lawn care and landscaping', 1500),
-  ('Painting', 'Interior and exterior painting', 1800),
-  ('HVAC', 'Heating and cooling services', 2500),
-  ('Handyman', 'General home repairs and maintenance', 1000)
-ON CONFLICT (name) DO NOTHING;
+-- Insert default services (idempotent - only inserts if table is empty)
+-- This ensures services exist even on a fresh database
+DO $$
+BEGIN
+  -- Only insert if services table is empty
+  IF NOT EXISTS (SELECT 1 FROM public.services LIMIT 1) THEN
+    INSERT INTO public.services (name, description, price_cents, is_active) VALUES
+      ('Plumbing', 'Plumbing repairs and installation', 2000, true),
+      ('Electrical', 'Electrical services and repairs', 2000, true),
+      ('HVAC', 'Heating and cooling services', 2500, true),
+      ('Home Cleaning', 'Residential cleaning services', 1000, true),
+      ('Handyman', 'General home repairs and maintenance', 1000, true),
+      ('Landscaping', 'Lawn care and landscaping', 1500, true)
+    ON CONFLICT (name) DO NOTHING;
+  END IF;
+END $$;
 
 -- ============================================================================
 -- GRANTS

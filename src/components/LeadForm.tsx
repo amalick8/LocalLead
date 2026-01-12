@@ -110,14 +110,6 @@ export function LeadForm() {
     }
   };
 
-  if (servicesLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
-      </div>
-    );
-  }
-
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
@@ -127,19 +119,39 @@ export function LeadForm() {
         <Select
           value={formData.service_id}
           onValueChange={(value) => handleChange('service_id', value)}
+          disabled={servicesLoading || !services || services.length === 0}
         >
           <SelectTrigger 
             id="service" 
-            className="h-14 text-lg border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200"
+            className="h-14 text-lg border border-slate-300 bg-white hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <SelectValue placeholder="Select a service" />
+            <SelectValue 
+              placeholder={
+                servicesLoading 
+                  ? "Loading services..." 
+                  : !services || services.length === 0
+                  ? "No services available"
+                  : "Select a service"
+              } 
+            />
           </SelectTrigger>
           <SelectContent>
-            {services?.map((service) => (
-              <SelectItem key={service.id} value={service.id}>
-                {service.name}
-              </SelectItem>
-            ))}
+            {servicesLoading ? (
+              <div className="flex items-center justify-center py-4">
+                <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+                <span className="ml-2 text-sm text-slate-600">Loading services...</span>
+              </div>
+            ) : !services || services.length === 0 ? (
+              <div className="py-4 text-center text-sm text-slate-500">
+                No services available
+              </div>
+            ) : (
+              services.map((service) => (
+                <SelectItem key={service.id} value={service.id}>
+                  {service.name}
+                </SelectItem>
+              ))
+            )}
           </SelectContent>
         </Select>
         {errors.service_id && (
@@ -265,7 +277,7 @@ export function LeadForm() {
         type="submit"
         size="lg"
         className="w-full h-14 text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm hover:shadow transition-all duration-200 mt-6"
-        disabled={createLead.isPending}
+        disabled={createLead.isPending || servicesLoading || !services || services.length === 0}
       >
         {createLead.isPending ? (
           <>

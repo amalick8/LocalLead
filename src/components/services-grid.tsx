@@ -85,18 +85,6 @@ export function ServicesGrid() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  if (isLoading) {
-    return (
-      <section id="services-section" className="px-6 py-24 lg:px-8 bg-slate-50">
-        <div className="mx-auto max-w-6xl">
-          <div className="text-center">
-            <p className="text-slate-600">Loading services...</p>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
   return (
     <section id="services-section" className="px-6 py-16 lg:px-8 bg-slate-50">
       <div className="mx-auto max-w-6xl">
@@ -107,8 +95,27 @@ export function ServicesGrid() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
-          {services?.map((service) => {
+        {isLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-xl p-6 border border-slate-200 animate-pulse"
+              >
+                <div className="w-12 h-12 rounded-lg bg-slate-200 mb-4"></div>
+                <div className="h-5 bg-slate-200 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-slate-200 rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        ) : !services || services.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-slate-600 mb-4">No services available at this time.</p>
+            <p className="text-sm text-slate-500">Please check back later.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+            {services.map((service) => {
             const Icon = serviceIcons[service.name] || Hammer
             const iconColor = serviceIconColors[service.name] || "bg-slate-50 text-slate-600"
             
@@ -143,7 +150,8 @@ export function ServicesGrid() {
               </button>
             )
           })}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   )
