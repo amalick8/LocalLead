@@ -46,24 +46,20 @@ export function LeadCard({ lead }: LeadCardProps) {
 
     setIsPurchasing(true);
     try {
+      // This will redirect to Stripe Checkout; do not mark payment as complete here
       await purchaseLead.mutateAsync({
         leadId: lead.id,
         userId: user.id,
         amountCents: lead.service?.price_cents || 1000,
       });
-
-      toast({
-        title: 'Lead Unlocked!',
-        description: 'You can now view the full contact details.',
-      });
+      // Note: User will be redirected to Stripe, so toast is handled in Dashboard after return
     } catch (error) {
+      setIsPurchasing(false); // Only reset if error (redirect won't happen)
       toast({
         title: 'Error',
-        description: 'Failed to purchase lead. Please try again.',
+        description: error instanceof Error ? error.message : 'Failed to start checkout. Please try again.',
         variant: 'destructive',
       });
-    } finally {
-      setIsPurchasing(false);
     }
   };
 

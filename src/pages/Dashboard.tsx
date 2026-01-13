@@ -1,17 +1,35 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { LeadCard } from '@/components/LeadCard';
 import { useAuth } from '@/lib/auth';
 import { useBusinessLeads, usePurchasedLeads } from '@/hooks/useLeads';
-import { Loader2, Inbox, ShoppingBag, Zap } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { useQueryClient } from '@tanstack/react-query';
+import { Loader2, Inbox, ShoppingBag } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, role, loading: authLoading } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { data: availableLeads, isLoading: leadsLoading } = useBusinessLeads(user?.id);
   const { data: purchasedLeads, isLoading: purchasedLoading } = usePurchasedLeads(user?.id);
+
+  // Handle payment return URLs
+  useEffect(() => {
+    const paymentStatus = searchParams.get('payment');
+
+    if (paymentStatus === 'success' || paymentStatus === 'cancel') {
+      // Always refetch after return; do not assume success
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      queryClient.invalidateQueries({ queryKey: ['payments'] });
+      // Remove query params; UI will reflect actual payment state from backend
+      navigate('/dashboard', { replace: true });
+    }
+  }, [searchParams, navigate, queryClient]);
 
   useEffect(() => {
     if (!authLoading && !user) {
