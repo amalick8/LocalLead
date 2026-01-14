@@ -38,14 +38,26 @@ export function useUpdateProfile() {
 
   return useMutation({
     mutationFn: async (updates: Partial<Profile> & { id: string }) => {
+      if (!updates.id) {
+        throw new Error('User id is required to update profile');
+      }
+
+      const upsertPayload = {
+        ...updates,
+        // Ensure country is always set for schemas that expect it
+        country: updates.country ?? 'US',
+      };
+
       const { data, error } = await supabase
         .from('profiles')
-        .update(updates)
-        .eq('id', updates.id)
+        .upsert(upsertPayload, { onConflict: 'id' })
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('[useUpdateProfile] Failed to upsert profile:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: (_, variables) => {

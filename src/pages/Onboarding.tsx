@@ -87,16 +87,29 @@ export default function Onboarding() {
     e.preventDefault();
     setErrors({});
 
+    // Safety check: must be authenticated
+    if (!user) {
+      console.error('[Onboarding] Submit attempted without authenticated user');
+      toast({
+        title: 'Error',
+        description: 'You must be logged in to complete onboarding.',
+        variant: 'destructive',
+      });
+      navigate('/login');
+      return;
+    }
+
     try {
       const validated = onboardingSchema.parse(formData);
-      
-      if (!user) {
+
+      // Safety check: required fields present (beyond schema)
+      if (!validated.business_type || !validated.service_description || !validated.city || !validated.state || !validated.zip_code) {
+        console.error('[Onboarding] Missing required fields after validation:', validated);
         toast({
           title: 'Error',
-          description: 'You must be logged in to complete onboarding.',
+          description: 'Please fill in all required fields.',
           variant: 'destructive',
         });
-        navigate('/login');
         return;
       }
 
@@ -104,7 +117,12 @@ export default function Onboarding() {
 
       await updateProfile.mutateAsync({
         id: user.id,
-        ...validated,
+        business_type: validated.business_type,
+        service_description: validated.service_description,
+        city: validated.city,
+        state: validated.state,
+        zip_code: validated.zip_code,
+        country: 'US',
       });
 
       toast({
@@ -123,6 +141,7 @@ export default function Onboarding() {
         });
         setErrors(fieldErrors);
       } else {
+        console.error('[Onboarding] Failed to save profile:', error);
         toast({
           title: 'Error',
           description: error instanceof Error ? error.message : 'Failed to save profile.',

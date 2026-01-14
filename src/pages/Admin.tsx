@@ -27,6 +27,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import {
   Loader2,
@@ -42,12 +53,22 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface Profile {
   id: string;
   email: string;
   business_name: string | null;
+  phone?: string | null;
+  business_type?: string | null;
+  service_description?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip_code?: string | null;
+  country?: string | null;
+  is_disabled?: boolean;
+  disabled_at?: string | null;
+  deleted_at?: string | null;
   created_at: string;
 }
 
@@ -55,6 +76,7 @@ export default function Admin() {
   const navigate = useNavigate();
   const { user, role, loading: authLoading } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { data: services, isLoading: servicesLoading } = useAllServices();
   const { data: leads, isLoading: leadsLoading } = useAdminLeads();
   const { data: payments, isLoading: paymentsLoading } = useAdminPayments();
@@ -90,6 +112,18 @@ export default function Admin() {
   });
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+
+  const [editingBusiness, setEditingBusiness] = useState<Profile | null>(null);
+  const [businessForm, setBusinessForm] = useState({
+    business_name: '',
+    phone: '',
+    business_type: '',
+    service_description: '',
+    city: '',
+    state: '',
+    zip_code: '',
+    country: 'US',
+  });
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -163,6 +197,113 @@ export default function Admin() {
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to expire lead.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const openEditBusiness = (profile: Profile) => {
+    setEditingBusiness(profile);
+    setBusinessForm({
+      business_name: profile.business_name || '',
+      phone: profile.phone || '',
+      business_type: profile.business_type || '',
+      service_description: profile.service_description || '',
+      city: profile.city || '',
+      state: profile.state || '',
+      zip_code: profile.zip_code || '',
+      country: profile.country || 'US',
+    });
+  };
+
+  const handleSaveBusiness = async () => {
+    if (!editingBusiness) return;
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          business_name: businessForm.business_name || null,
+          phone: businessForm.phone || null,
+          business_type: businessForm.business_type || null,
+          service_description: businessForm.service_description || null,
+          city: businessForm.city || null,
+          state: businessForm.state || null,
+          zip_code: businessForm.zip_code || null,
+          country: businessForm.country || 'US',
+        })
+        .eq('id', editingBusiness.id);
+
+      if (error) throw error;
+
+      toast({ title: 'Business updated', description: 'Profile changes have been saved.' });
+      setEditingBusiness(null);
+      queryClient.invalidateQueries({ queryKey: ['profiles', 'admin'] });
+    } catch (error) {
+      console.error('[Admin] Failed to update business profile:', error);
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to update business.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDisableBusiness = async (profile: Profile, disable: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          is_disabled: disable,
+          disabled_at: disable ? new Date().toISOString() : null,
+        })
+        .eq('id', profile.id);
+
+      if (error) throw error;
+
+      toast({
+        title: disable ? 'Business disabled' : 'Business re-enabled',
+        description: disable
+          ? 'This business can no longer access leads or purchase flow.'
+          : 'This business can access the platform again.',
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['profiles', 'admin'] });
+    } catch (error) {
+      console.error('[Admin] Failed to toggle business disabled state:', error);
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to update business status.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDeleteBusiness = async (profile: Profile) => {
+    try {
+      const now = new Date().toISOString();
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          deleted_at: now,
+          is_disabled: true,
+          disabled_at: now,
+        })
+        .eq('id', profile.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Business removed',
+        description: 'The business has been soft-deleted (removed from operations).',
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['profiles', 'admin'] });
+    } catch (error) {
+      console.error('[Admin] Failed to soft-delete business:', error);
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to remove business.',
         variant: 'destructive',
       });
     }
@@ -575,7 +716,9 @@ export default function Admin() {
                         <TableRow>
                           <TableHead>Business Name</TableHead>
                           <TableHead>Email</TableHead>
+                          <TableHead>Status</TableHead>
                           <TableHead>Joined</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -585,10 +728,92 @@ export default function Admin() {
                               {profile.business_name || '-'}
                             </TableCell>
                             <TableCell>{profile.email}</TableCell>
+                            <TableCell>
+                              {profile.deleted_at ? (
+                                <Badge variant="outline">deleted</Badge>
+                              ) : profile.is_disabled ? (
+                                <Badge variant="secondary">disabled</Badge>
+                              ) : (
+                                <Badge variant="default">active</Badge>
+                              )}
+                            </TableCell>
                             <TableCell className="text-muted-foreground">
                               {formatDistanceToNow(new Date(profile.created_at), {
                                 addSuffix: true,
                               })}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="inline-flex items-center gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => openEditBusiness(profile)}
+                                  disabled={!!profile.deleted_at}
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-amber-700 hover:text-amber-800 hover:bg-amber-50"
+                                      disabled={!!profile.deleted_at}
+                                    >
+                                      {profile.is_disabled ? 'Enable' : 'Disable'}
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        {profile.is_disabled ? 'Re-enable business?' : 'Disable business?'}
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        {profile.is_disabled
+                                          ? 'This will allow the business to access leads and purchases again.'
+                                          : 'This will block the business from accessing leads and purchasing.'}
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => handleDisableBusiness(profile, !profile.is_disabled)}
+                                      >
+                                        Confirm
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                      disabled={!!profile.deleted_at}
+                                    >
+                                      Delete
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Remove this business?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This is a soft-delete. The business profile will be marked deleted and disabled.
+                                        This does not delete the Supabase Auth user.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction onClick={() => handleDeleteBusiness(profile)}>
+                                        Remove
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -597,6 +822,105 @@ export default function Admin() {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Edit Business Dialog */}
+              <Dialog open={!!editingBusiness} onOpenChange={(open) => !open && setEditingBusiness(null)}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Business</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-2">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="bizName">Business Name</Label>
+                        <Input
+                          id="bizName"
+                          value={businessForm.business_name}
+                          onChange={(e) => setBusinessForm({ ...businessForm, business_name: e.target.value })}
+                          className="mt-1.5"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="bizPhone">Phone</Label>
+                        <Input
+                          id="bizPhone"
+                          value={businessForm.phone}
+                          onChange={(e) => setBusinessForm({ ...businessForm, phone: e.target.value })}
+                          className="mt-1.5"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="bizType">Business Type (Service)</Label>
+                      <Input
+                        id="bizType"
+                        value={businessForm.business_type}
+                        onChange={(e) => setBusinessForm({ ...businessForm, business_type: e.target.value })}
+                        className="mt-1.5"
+                        placeholder="e.g., Plumbing"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="bizDesc">Service Description</Label>
+                      <Input
+                        id="bizDesc"
+                        value={businessForm.service_description}
+                        onChange={(e) => setBusinessForm({ ...businessForm, service_description: e.target.value })}
+                        className="mt-1.5"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="bizCity">City</Label>
+                        <Input
+                          id="bizCity"
+                          value={businessForm.city}
+                          onChange={(e) => setBusinessForm({ ...businessForm, city: e.target.value })}
+                          className="mt-1.5"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="bizState">State</Label>
+                        <Input
+                          id="bizState"
+                          value={businessForm.state}
+                          onChange={(e) => setBusinessForm({ ...businessForm, state: e.target.value })}
+                          className="mt-1.5"
+                          maxLength={2}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="bizZip">Zip Code</Label>
+                        <Input
+                          id="bizZip"
+                          value={businessForm.zip_code}
+                          onChange={(e) => setBusinessForm({ ...businessForm, zip_code: e.target.value })}
+                          className="mt-1.5"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="bizCountry">Country</Label>
+                        <Input
+                          id="bizCountry"
+                          value={businessForm.country}
+                          onChange={(e) => setBusinessForm({ ...businessForm, country: e.target.value })}
+                          className="mt-1.5"
+                        />
+                      </div>
+                    </div>
+
+                    <Button onClick={handleSaveBusiness} className="w-full">
+                      Save Changes
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </TabsContent>
 
             <TabsContent value="payments">
