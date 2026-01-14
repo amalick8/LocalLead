@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { useAuth } from '@/lib/auth';
 import { useAllServices, useUpdateService, useCreateService } from '@/hooks/useServices';
-import { useAdminLeads } from '@/hooks/useLeads';
+import { useAdminLeads, useExpireLead, useLeadAnalytics } from '@/hooks/useLeads';
+import { useAdminPayments } from '@/hooks/usePayments';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,6 +36,10 @@ import {
   DollarSign,
   Plus,
   Pencil,
+  CreditCard,
+  XCircle,
+  TrendingUp,
+  BarChart3,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
@@ -52,8 +57,11 @@ export default function Admin() {
   const { toast } = useToast();
   const { data: services, isLoading: servicesLoading } = useAllServices();
   const { data: leads, isLoading: leadsLoading } = useAdminLeads();
+  const { data: payments, isLoading: paymentsLoading } = useAdminPayments();
+  const { data: analytics, isLoading: analyticsLoading } = useLeadAnalytics();
   const updateService = useUpdateService();
   const createService = useCreateService();
+  const expireLead = useExpireLead();
 
   const { data: profiles, isLoading: profilesLoading } = useQuery({
     queryKey: ['profiles', 'admin'],
@@ -144,12 +152,21 @@ export default function Admin() {
     );
   }
 
-  const totalRevenue = leads?.reduce((acc, lead) => {
-    if (lead.status === 'purchased') {
-      return acc + (lead.service?.price_cents || 0);
+  const handleExpireLead = async (leadId: string) => {
+    try {
+      await expireLead.mutateAsync(leadId);
+      toast({
+        title: 'Lead expired',
+        description: 'The lead has been marked as expired.',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to expire lead.',
+        variant: 'destructive',
+      });
     }
-    return acc;
-  }, 0) || 0;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -164,33 +181,61 @@ export default function Admin() {
             </p>
           </div>
 
-          {/* Stats */}
+          {/* Analytics Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
                   Total Leads
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">{leads?.length || 0}</div>
+                {analyticsLoading ? (
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                ) : (
+                  <div className="text-3xl font-bold">{analytics?.total_leads || 0}</div>
+                )}
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-green-600" />
                   Purchased
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">
-                  {leads?.filter(l => l.status === 'purchased').length || 0}
-                </div>
+                {analyticsLoading ? (
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                ) : (
+                  <div className="text-3xl font-bold text-green-600">
+                    {analytics?.purchased_leads || 0}
+                  </div>
+                )}
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-blue-600" />
+                  Revenue
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {analyticsLoading ? (
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                ) : (
+                  <div className="text-3xl font-bold text-blue-600">
+                    ${((analytics?.total_revenue_cents || 0) / 100).toFixed(0)}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Users className="h-4 w-4" />
                   Businesses
                 </CardTitle>
               </CardHeader>
@@ -198,16 +243,70 @@ export default function Admin() {
                 <div className="text-3xl font-bold">{profiles?.length || 0}</div>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Additional Analytics */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Revenue
+                  New Leads
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">
-                  ${(totalRevenue / 100).toFixed(0)}
-                </div>
+                {analyticsLoading ? (
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                ) : (
+                  <div className="text-3xl font-bold">{analytics?.new_leads || 0}</div>
+                )}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Expired
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {analyticsLoading ? (
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                ) : (
+                  <div className="text-3xl font-bold text-gray-500">
+                    {analytics?.expired_leads || 0}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Conversion Rate
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {analyticsLoading ? (
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                ) : (
+                  <div className="text-3xl font-bold">
+                    {analytics?.conversion_rate?.toFixed(1) || '0.0'}%
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Avg Lead Price
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {analyticsLoading ? (
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                ) : (
+                  <div className="text-3xl font-bold">
+                    ${((analytics?.avg_lead_price_cents || 0) / 100).toFixed(2)}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -225,6 +324,10 @@ export default function Admin() {
               <TabsTrigger value="businesses" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 Businesses
+              </TabsTrigger>
+              <TabsTrigger value="payments" className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4" />
+                Payments
               </TabsTrigger>
             </TabsList>
 
@@ -404,6 +507,7 @@ export default function Admin() {
                           <TableHead>Location</TableHead>
                           <TableHead>Status</TableHead>
                           <TableHead>Submitted</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -417,6 +521,8 @@ export default function Admin() {
                                 variant={
                                   lead.status === 'purchased'
                                     ? 'default'
+                                    : lead.status === 'expired'
+                                    ? 'outline'
                                     : lead.status === 'new'
                                     ? 'secondary'
                                     : 'outline'
@@ -429,6 +535,20 @@ export default function Admin() {
                               {formatDistanceToNow(new Date(lead.created_at), {
                                 addSuffix: true,
                               })}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {lead.status === 'new' && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleExpireLead(lead.id)}
+                                  disabled={expireLead.isPending}
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                >
+                                  <XCircle className="h-4 w-4 mr-1" />
+                                  Expire
+                                </Button>
+                              )}
                             </TableCell>
                           </TableRow>
                         ))}
@@ -467,6 +587,78 @@ export default function Admin() {
                             <TableCell>{profile.email}</TableCell>
                             <TableCell className="text-muted-foreground">
                               {formatDistanceToNow(new Date(profile.created_at), {
+                                addSuffix: true,
+                              })}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="payments">
+              <Card>
+                <CardHeader>
+                  <CardTitle>All Payments</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {paymentsLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    </div>
+                  ) : !payments || payments.length === 0 ? (
+                    <div className="flex items-center justify-center py-12">
+                      <div className="text-center">
+                        <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold mb-2">No payments yet</h3>
+                        <p className="text-muted-foreground">
+                          Payments will appear here once businesses purchase leads.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Business Email</TableHead>
+                          <TableHead>Service</TableHead>
+                          <TableHead>Lead ID</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Date</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {payments.map((payment) => (
+                          <TableRow key={payment.id}>
+                            <TableCell className="font-medium">
+                              {payment.profile.email}
+                            </TableCell>
+                            <TableCell>{payment.service.name}</TableCell>
+                            <TableCell className="font-mono text-sm">
+                              {payment.lead_id.slice(0, 8)}...
+                            </TableCell>
+                            <TableCell>
+                              ${(payment.amount_cents / 100).toFixed(2)}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={
+                                  payment.status === 'completed'
+                                    ? 'default'
+                                    : payment.status === 'pending'
+                                    ? 'secondary'
+                                    : 'outline'
+                                }
+                              >
+                                {payment.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-muted-foreground">
+                              {formatDistanceToNow(new Date(payment.created_at), {
                                 addSuffix: true,
                               })}
                             </TableCell>

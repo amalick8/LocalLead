@@ -1,46 +1,113 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { LeadCard } from '@/components/LeadCard';
 import { useAuth } from '@/lib/auth';
 import { useBusinessLeads, usePurchasedLeads } from '@/hooks/useLeads';
+import { useOnboardingComplete } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
-import { Loader2, Inbox, ShoppingBag } from 'lucide-react';
+import { Loader2, Inbox, ShoppingBag, CheckCircle2, XCircle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user, role, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { isComplete: onboardingComplete, isLoading: onboardingLoading } = useOnboardingComplete(user?.id);
   const { data: availableLeads, isLoading: leadsLoading } = useBusinessLeads(user?.id);
   const { data: purchasedLeads, isLoading: purchasedLoading } = usePurchasedLeads(user?.id);
 
-  // Handle payment return URLs
+  // Track previous purchased count to detect new purchases after refetch
+  const previousPurchasedCountRef = useRef<number>(0);
+  const paymentStatusRef = useRef<string | null>(null);
+
+  // Handle payment return URLs - detect and trigger refetch
   useEffect(() => {
     const paymentStatus = searchParams.get('payment');
 
     if (paymentStatus === 'success' || paymentStatus === 'cancel') {
-      // Always refetch after return; do not assume success
+      // Store payment status for later verification
+      paymentStatusRef.current = paymentStatus;
+      
+      // Store current purchased count BEFORE refetch (capture baseline)
+      // Note: We intentionally read purchasedLeads here without including it in deps
+      // because we want to capture the snapshot at the moment URL param is detected,
+      // not react to every count change. This is the "before" state for comparison.
+      previousPurchasedCountRef.current = purchasedLeads?.length || 0;
+
+      // Trigger refetch - webhook is source of truth
       queryClient.invalidateQueries({ queryKey: ['leads'] });
       queryClient.invalidateQueries({ queryKey: ['payments'] });
-      // Remove query params; UI will reflect actual payment state from backend
-      navigate('/dashboard', { replace: true });
-    }
-  }, [searchParams, navigate, queryClient]);
 
+      // Clear URL params immediately to prevent re-triggering
+      setSearchParams({}, { replace: true });
+    }
+    // Only depend on searchParams - don't re-run when purchasedLeads changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, queryClient, setSearchParams]);
+
+  // Verify payment success after refetch completes
+  // Only show success toast if backend confirms a new purchase
+  useEffect(() => {
+    // Skip if no payment status was detected or still loading
+    if (!paymentStatusRef.current || leadsLoading || purchasedLoading) {
+      return;
+    }
+
+    const paymentStatus = paymentStatusRef.current;
+    const currentPurchasedCount = purchasedLeads?.length || 0;
+    const previousCount = previousPurchasedCountRef.current;
+
+    // Handle cancel - show immediately
+    if (paymentStatus === 'cancel') {
+      toast({
+        title: 'Payment cancelled',
+        description: 'You can try again or contact support if you need assistance.',
+        variant: 'destructive',
+        action: <XCircle className="text-red-500" />,
+      });
+      paymentStatusRef.current = null; // Reset
+      return;
+    }
+
+    // Handle success - ONLY show if backend confirms new purchase
+    if (paymentStatus === 'success') {
+      // Verify purchase actually happened by comparing counts
+      if (currentPurchasedCount > previousCount) {
+        toast({
+          title: 'Payment successful!',
+          description: 'Your lead has been unlocked and is now available in "My Leads".',
+          action: <CheckCircle2 className="text-green-500" />,
+        });
+      }
+      // If count didn't increase, webhook may not have processed yet
+      // Don't show false success - user can check "My Leads" tab
+      paymentStatusRef.current = null; // Reset
+    }
+  }, [purchasedLeads?.length, leadsLoading, purchasedLoading, toast]);
+
+  // Redirect logic: check auth, role, and onboarding status
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/login');
+      return;
     }
     if (!authLoading && role === 'admin') {
       navigate('/admin');
+      return;
     }
-  }, [user, role, authLoading, navigate]);
+    // Business users must complete onboarding before accessing dashboard
+    if (!authLoading && !onboardingLoading && user && role === 'business' && !onboardingComplete) {
+      navigate('/onboarding');
+      return;
+    }
+  }, [user, role, authLoading, onboardingLoading, onboardingComplete, navigate]);
 
-  if (authLoading || !user) {
+  // Show loading while checking auth or onboarding status
+  if (authLoading || onboardingLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
